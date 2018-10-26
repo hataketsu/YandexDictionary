@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "64841823189",
+    "firebase_url": "https://yandexdictionary.firebaseio.com",
+    "project_id": "yandexdictionary",
+    "storage_bucket": "yandexdictionary.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:64841823189:android:ec6a3fa3dd498269",
+        "android_client_info": {
+          "package_name": "com.worker.yandexdictionary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "64841823189-hhnr4ntms17h7h55dfh56rpccqjr5ibl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.worker.yandexdictionary",
+            "certificate_hash": "03d09b28bd372bb04f9097195285a6678c0384da"
+          }
+        },
+        {
+          "client_id": "64841823189-am2dt7kmjcmimdo531ecttma8tmlg08l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBq8h4ja2P9YYAf9fju408BT636nY02f1A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "64841823189-am2dt7kmjcmimdo531ecttma8tmlg08l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
