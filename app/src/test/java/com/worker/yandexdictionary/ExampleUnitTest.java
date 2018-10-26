@@ -5,6 +5,7 @@ import android.icu.text.MeasureFormat;
 import org.junit.Test;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
@@ -25,5 +26,9 @@ public class ExampleUnitTest {
     @Test
     public void test_format() {
         System.out.print(MessageFormat.format(BASE_URL,API_KEY,"hello","vi"));
+    }
+    @Test
+    public void test_split() {
+        System.out.print(LanguageHelper.NAME_TO_CODE.get("English"));
     }
 }

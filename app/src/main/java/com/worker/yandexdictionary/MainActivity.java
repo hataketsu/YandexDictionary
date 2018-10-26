@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     public final String API_KEY = "trnsl.1.1.20181026T162625Z.b5c819a79d765111.4bc11bec1128eb4473dd11d0feafdfcb1525296b";
     public final String BASE_URL = "https://translate.yandex.net/api/v1.5/tr.json/translate?key={0}&text={1}&lang={2}&format=plain";
     private ProgressDialog waitDialog;
+    private Spinner toSpn;
+    private Spinner fromSpn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
         translateBtn = findViewById(R.id.translateBtn);
         inputED = findViewById(R.id.inputED);
         outputTV = findViewById(R.id.outputTV);
+        fromSpn = findViewById(R.id.fromSpn);
+        toSpn = findViewById(R.id.toSpn);
+
         waitDialog = new ProgressDialog(this);
         waitDialog.setTitle("Please wait");
         waitDialog.setMessage("Translating...");
@@ -60,13 +67,20 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String inputText = inputED.getText().toString().trim();
                 inputText = URLEncoder.encode(inputText);
+                String fromLanguge = LanguageHelper.LANGUAGES_CODE[fromSpn.getSelectedItemPosition()];
+                String toLanguge = LanguageHelper.LANGUAGES_CODE[toSpn.getSelectedItemPosition()];
                 waitDialog.show();
-                queue.add(new StringRequest(MessageFormat.format(BASE_URL, API_KEY, inputText, "vi"), new Response.Listener<String>() {
+                queue.add(new StringRequest(MessageFormat.format(BASE_URL, API_KEY, inputText, fromLanguge + "-" + toLanguge), new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         waitDialog.dismiss();
                         try {
                             JSONObject result = new JSONObject(response);
+                            String language = result.getString("lang");
+                            String fromLanguge = language.split("-")[0];
+                            String toLanguge = language.split("-")[1];
+                            fromSpn.setSelection(LanguageHelper.getIndex(fromLanguge));
+                            toSpn.setSelection(LanguageHelper.getIndex(toLanguge));
                             JSONArray lines = result.getJSONArray("text");
                             StringBuilder buf = new StringBuilder();
                             for (int i = 0; i < lines.length(); i++) {
