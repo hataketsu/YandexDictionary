@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 
 public class BaseCustomActivity extends AppCompatActivity {
@@ -67,6 +68,7 @@ public class BaseCustomActivity extends AppCompatActivity {
     }
 
     protected void translate(String text) {
+        text=URLEncoder.encode(text.trim());
         Log.d("TRANSLATION", MessageFormat.format("translate: {0}", text));
         String fromLanguage = LanguageHelper.LANGUAGES_CODE[fromSpn.getSelectedItemPosition()];
         String toLanguage = LanguageHelper.LANGUAGES_CODE[toSpn.getSelectedItemPosition()];
@@ -103,6 +105,7 @@ public class BaseCustomActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 waitDialog.dismiss();
+                error.printStackTrace();
                 toast(error.getMessage());
             }
         }));

@@ -84,7 +84,6 @@ public class MainActivity extends BaseCustomActivity {
             @Override
             public void onClick(View view) {
                 String inputText = inputED.getText().toString().trim();
-                inputText = URLEncoder.encode(inputText);
                 translate(inputText);
             }
         });

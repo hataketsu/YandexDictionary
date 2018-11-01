@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toStartOf="@+id/translateBtn"
         app:layout_constraintTop_toTopOf="@+id/translateBtn" />
 
-    <ImageView
+    <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/imageIV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
