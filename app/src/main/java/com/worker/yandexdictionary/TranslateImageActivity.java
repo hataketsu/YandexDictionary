@@ -1,5 +1,6 @@
 package com.worker.yandexdictionary;
 
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -7,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -66,7 +68,6 @@ public class TranslateImageActivity extends BaseCustomActivity {
                 int r_y = (int) (y * bitmapHeight);
                 Log.d("POSITION", MessageFormat.format("x: {0} y:{1}", r_x, r_y));
                 for (Map.Entry<Rect, String> box : boxToText.entrySet()) {
-                    Log.d("POSITION", MessageFormat.format("box {0}", box.getKey().flattenToString()));
                     if (box.getKey().contains(r_x, r_y)) {
                         translate(box.getValue());
                     }
@@ -146,6 +147,11 @@ public class TranslateImageActivity extends BaseCustomActivity {
 
     @Override
     protected void afterTranslate(String result) {
-        toast(result);
+        new AlertDialog.Builder(this).setMessage(result).setTitle("Translation result").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int i) {
+                dialog.cancel();
+            }
+        }).create().show();
     }
 }
