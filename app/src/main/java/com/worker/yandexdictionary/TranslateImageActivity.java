@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
@@ -35,11 +37,12 @@ public class TranslateImageActivity extends BaseCustomActivity {
 
     private SharedPreferences preferences;
     private boolean useCloudOCR = false;
-    private ImageView imageIV;
+    private PhotoView imageIV;
     private Paint blockPaint;
     private Paint textPaint;
     private Map<Rect, String> boxToText = new HashMap<>();
     private int bitmapWidth;
+    private int bitmapHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,18 +59,18 @@ public class TranslateImageActivity extends BaseCustomActivity {
         blockPaint.setAntiAlias(true);
         super.initViews();
         imageIV = findViewById(R.id.imageIV);
-        imageIV.setOnTouchListener(new View.OnTouchListener() {
+        imageIV.setOnPhotoTapListener(new OnPhotoTapListener() {
             @Override
-            public boolean onTouch(View view, MotionEvent e) {
-                int x = (int) e.getX() * bitmapWidth / imageIV.getWidth();
-                int y = (int) e.getY() * bitmapWidth / imageIV.getWidth();
+            public void onPhotoTap(ImageView view, float x, float y) {
+                int r_x = (int) (x * bitmapWidth);
+                int r_y = (int) (y * bitmapHeight);
+                Log.d("POSITION", MessageFormat.format("x: {0} y:{1}", r_x, r_y));
                 for (Map.Entry<Rect, String> box : boxToText.entrySet()) {
-                    if (box.getKey().contains(x, y)) {
+                    Log.d("POSITION", MessageFormat.format("box {0}", box.getKey().flattenToString()));
+                    if (box.getKey().contains(r_x, r_y)) {
                         translate(box.getValue());
                     }
                 }
-                Log.d("POSITION", MessageFormat.format("x: {0} y:{1}", x, y));
-                return false;
             }
         });
         takeNewImage();
@@ -127,6 +130,7 @@ public class TranslateImageActivity extends BaseCustomActivity {
                             }
                             imageIV.setImageBitmap(drawBitmap);
                             bitmapWidth = drawBitmap.getWidth();
+                            bitmapHeight = drawBitmap.getHeight();
                             waitDialog.dismiss();
                         }
                     });
