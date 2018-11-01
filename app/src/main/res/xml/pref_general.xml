@@ -1,0 +1,14 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="use_cloud_ocr"
+        android:summary="Higher accuracy but have to pay for it"
+        android:title="Use cloud image OCR" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="detect_language"
+        android:title="Auto detect input language" />
+
+
+</PreferenceScreen>

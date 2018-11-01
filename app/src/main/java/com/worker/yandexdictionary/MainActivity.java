@@ -1,145 +1,173 @@
 package com.worker.yandexdictionary;
 
 import android.Manifest;
-import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.github.kayvannj.permission_utils.Func;
 import com.github.kayvannj.permission_utils.PermissionUtil;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.ml.vision.FirebaseVision;
-import com.google.firebase.ml.vision.common.FirebaseVisionImage;
-import com.google.firebase.ml.vision.text.FirebaseVisionText;
-import com.vansuita.pickimage.bean.PickResult;
-import com.vansuita.pickimage.bundle.PickSetup;
-import com.vansuita.pickimage.dialog.PickImageDialog;
-import com.vansuita.pickimage.listeners.IPickResult;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URLEncoder;
-import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseCustomActivity {
 
-    private RequestQueue queue;
     private Button translateBtn;
     private EditText inputED;
     private TextView outputTV;
-    public final String API_KEY = "trnsl.1.1.20181026T162625Z.b5c819a79d765111.4bc11bec1128eb4473dd11d0feafdfcb1525296b";
-    public final String BASE_URL = "https://translate.yandex.net/api/v1.5/tr.json/translate?key={0}&text={1}&lang={2}&format=plain";
-    private ProgressDialog waitDialog;
-    private Spinner toSpn;
-    private Spinner fromSpn;
+
     private ImageButton inputCaptureBtn;
+    private ImageButton readInputBtn;
+    private ImageButton readOutputBtn;
+    private TextToSpeech textToSpeech;
+    private View inputRecordBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        queue = Volley.newRequestQueue(this);
         askForPermission();
         initViews();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+            textToSpeech = null;
+            readInputBtn.setVisibility(View.GONE);
+            readOutputBtn.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                textToSpeech.setLanguage(Locale.US);
+                readInputBtn.setVisibility(View.VISIBLE);
+                readOutputBtn.setVisibility(View.VISIBLE);
+            }
+        });
 
     }
 
-    private void initViews() {
+    protected void initViews() {
+        super.initViews();
         translateBtn = findViewById(R.id.translateBtn);
         inputCaptureBtn = findViewById(R.id.inputCaptureBtn);
+        readInputBtn = findViewById(R.id.readInputBtn);
+        readOutputBtn = findViewById(R.id.readOutputBtn);
+        inputRecordBtn = findViewById(R.id.inputRecordBtn);
+        readInputBtn.setVisibility(View.GONE);
+        readOutputBtn.setVisibility(View.GONE);
         inputED = findViewById(R.id.inputED);
         outputTV = findViewById(R.id.outputTV);
-        fromSpn = findViewById(R.id.fromSpn);
-        toSpn = findViewById(R.id.toSpn);
-
-        waitDialog = new ProgressDialog(this);
-        waitDialog.setTitle("Please wait");
-        waitDialog.setMessage("Translating...");
-        waitDialog.setCancelable(false);
 
         translateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String inputText = inputED.getText().toString().trim();
                 inputText = URLEncoder.encode(inputText);
-                String fromLanguage = LanguageHelper.LANGUAGES_CODE[fromSpn.getSelectedItemPosition()];
-                String toLanguage = LanguageHelper.LANGUAGES_CODE[toSpn.getSelectedItemPosition()];
-                waitDialog.show();
-                queue.add(new StringRequest(MessageFormat.format(BASE_URL, API_KEY, inputText, fromLanguage + "-" + toLanguage), new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        waitDialog.dismiss();
-                        try {
-                            JSONObject result = new JSONObject(response);
-                            String language = result.getString("lang");
-                            String fromLanguge = language.split("-")[0];
-                            String toLanguage = language.split("-")[1];
-                            fromSpn.setSelection(LanguageHelper.getIndex(fromLanguge));
-                            toSpn.setSelection(LanguageHelper.getIndex(toLanguage));
-                            JSONArray lines = result.getJSONArray("text");
-                            StringBuilder buf = new StringBuilder();
-                            for (int i = 0; i < lines.length(); i++) {
-                                buf.append(lines.getString(i));
-                            }
-                            outputTV.setText(buf.toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            toast(e.getMessage());
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        waitDialog.dismiss();
-                        toast(error.getMessage());
-                    }
-                }));
+                translate(inputText);
             }
         });
 
         inputCaptureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PickImageDialog.build(new PickSetup()).setOnPickResult(new IPickResult() {
-                    @Override
-                    public void onPickResult(PickResult pickResult) {
-                        Throwable error = pickResult.getError();
-                        if (error == null) {
-                            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(pickResult.getBitmap());
-                            FirebaseVision.getInstance().getOnDeviceTextRecognizer().processImage(image).addOnSuccessListener(new OnSuccessListener<FirebaseVisionText>() {
-                                @Override
-                                public void onSuccess(FirebaseVisionText result) {
-                                    StringBuilder buf = new StringBuilder();
-                                    for (FirebaseVisionText.TextBlock block : result.getTextBlocks()) {
-                                        for (FirebaseVisionText.Line line : block.getLines())
-                                            buf.append(line.getText()).append("\n");
-                                    }
-                                    inputED.setText(buf);
-                                }
-                            });
-                        } else {
-                            toast(error.getMessage());
-                        }
-
-                    }
-                }).show(MainActivity.this);
+                startActivity(new Intent(MainActivity.this, TranslateImageActivity.class));
             }
         });
+        readInputBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textToSpeech.speak(inputED.getText().toString().trim(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+        readOutputBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                textToSpeech.speak(outputTV.getText().toString().trim(), TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
+        inputRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                promptSpeechInput();
+            }
+        });
+        fromSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                preferences.edit().putInt("from_language", position).apply();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        toSpn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                preferences.edit().putInt("to_language", position).apply();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case 213: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    inputED.setText(result.get(0));
+                }
+                break;
+            }
+
+        }
+    }
+
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                "Input what you want to translate");
+        try {
+            startActivityForResult(intent, 213);
+        } catch (Exception e) {
+            toast(e.getMessage());
+        }
     }
 
     private void askForPermission() {
@@ -151,7 +179,24 @@ public class MainActivity extends AppCompatActivity {
         }).ask(134);
     }
 
-    private void toast(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.item_setting) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void afterTranslate(String result) {
+        outputTV.setText(result);
     }
 }

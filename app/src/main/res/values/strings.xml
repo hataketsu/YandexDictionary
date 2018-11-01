@@ -47,7 +47,6 @@
         <item>Latin</item>
         <item>Latvian</item>
         <item>Lithuanian</item>
-        <item>Luxembourgish</item>
         <item>Malagasy</item>
         <item>Malay</item>
         <item>Malayalam</item>
@@ -95,5 +94,12 @@
         <item>Estonian</item>
         <item>Esperanto</item>
         <item>Javanese</item>
-        <item>Japanese</item>    </string-array>
+        <item>Japanese</item>
+    </string-array>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
 </resources>

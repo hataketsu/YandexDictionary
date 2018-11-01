@@ -21,7 +21,7 @@
         android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/translateBtn" />
 
     <Button
         android:id="@+id/translateBtn"
@@ -30,11 +30,11 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Translate to"
+        android:layout_marginTop="8dp"
+        android:text="Translate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputED" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
         android:id="@+id/toSpn"
@@ -43,6 +43,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:entries="@array/all_languages"
+        android:spinnerMode="dialog"
         app:layout_constraintStart_toEndOf="@+id/translateBtn"
         app:layout_constraintTop_toTopOf="@+id/translateBtn" />
 
@@ -53,6 +54,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:entries="@array/all_languages"
+        android:spinnerMode="dialog"
         app:layout_constraintEnd_toStartOf="@+id/translateBtn"
         app:layout_constraintTop_toTopOf="@+id/translateBtn" />
 
@@ -69,7 +71,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/translateBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/inputED" />
 
     <ImageButton
         android:id="@+id/readOutputBtn"
@@ -82,7 +84,7 @@
         app:srcCompat="@drawable/ic_play_arrow_black_24dp" />
 
     <ImageButton
-        android:id="@+id/readInputBtn2"
+        android:id="@+id/readInputBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
