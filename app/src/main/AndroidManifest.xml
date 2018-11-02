@@ -29,7 +29,7 @@
             android:name="com.google.firebase.ml.vision.DEPENDENCIES"
             android:value="label,ocr" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".TextTranslatingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +39,7 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".TranslateImageActivity"></activity>
+        <activity android:name=".ImageTranslatingActivity"></activity>
     </application>
 
 </manifest>

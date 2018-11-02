@@ -19,16 +19,16 @@ public class ExampleUnitTest {
     public final String BASE_URL = "https://translate.yandex.net/api/v1.5/tr.json/translate?key={0}&text={1}&lang={2}&format=plain";
 
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    public void test_language_helper() {
+        assertEquals(LanguageHelper.LANGUAGES_NAME.length, LanguageHelper.LANGUAGES_CODE.length);
+
+        int en = LanguageHelper.getIndex("en");
+        assertNotEquals(en, -1);
+        assertEquals(LanguageHelper.LANGUAGES_NAME[en], "English");
+        assertEquals(LanguageHelper.LANGUAGES_NAME[en], LanguageHelper.CODE_TO_NAME.get("en"));
+
+        assertEquals(LanguageHelper.getIndex("not_exist"), -1);
     }
 
-    @Test
-    public void test_format() {
-        System.out.print(MessageFormat.format(BASE_URL,API_KEY,"hello","vi"));
-    }
-    @Test
-    public void test_split() {
-        System.out.print(LanguageHelper.NAME_TO_CODE.get("English"));
-    }
+
 }

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import java.util.List;
 
+//setting activity
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
 
@@ -31,14 +32,14 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
      */
     @Override
     public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
+        loadHeadersFromResource(R.xml.pref_headers, target); //fetch settings headers
     }
 
     public static class GeneralPreferenceFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
+            addPreferencesFromResource(R.xml.pref_general); //fetch general settings
             setHasOptionsMenu(true);
         }
 

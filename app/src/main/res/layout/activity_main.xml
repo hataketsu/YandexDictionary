@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".TextTranslatingActivity">
 
     <EditText
         android:id="@+id/inputED"
@@ -115,5 +115,26 @@
         app:layout_constraintEnd_toStartOf="@+id/inputCaptureBtn"
         app:layout_constraintTop_toTopOf="@+id/inputED"
         app:srcCompat="@drawable/ic_settings_voice_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/spellCheckBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:tint="@color/colorPrimaryDark"
+        app:layout_constraintEnd_toStartOf="@+id/inputRecordBtn"
+        app:layout_constraintTop_toTopOf="@+id/inputED"
+        app:srcCompat="@drawable/ic_spellcheck_black_24dp" />
+
+    <ImageButton
+        android:id="@+id/clearBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/spellCheckBtn"
+        app:layout_constraintTop_toTopOf="@+id/inputED"
+        app:srcCompat="@drawable/ic_clear_black_24dp" />
 
 </android.support.constraint.ConstraintLayout>
